@@ -1,11 +1,14 @@
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
+const helmet = require('helmet');
+const rateLimit = require('express-rate-limit');
 const { getPool } = require('./db');
 
 const app = express();
+app.use(helmet());
 app.use(cors());
-app.use(express.json());
+app.use(express.json({ limit: '50kb' }));
 
 app.get('/api/health', async (req, res) => {
   try {
@@ -17,6 +20,14 @@ app.get('/api/health', async (req, res) => {
     res.status(500).json({ status: 'error', db: 'not connected' });
   }
 });
+
+// brute-force protection on login
+app.use('/api/auth/login', rateLimit({ windowMs: 15 * 60 * 1000, max: 20, message: { message: 'Too many attempts, try later' } }));
+
+app.use('/api/auth', require('./routes/auth.routes'));
+app.use('/api/requests', require('./routes/citizen.routes'));
+app.use('/api/requests', require('./routes/volunteer.routes'));
+app.use('/api/admin', require('./routes/admin.routes'));
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
