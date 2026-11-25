@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>FloodGrid · Secure Disaster Relief Coordination</title>
+<meta name="theme-color" content="#060b16">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/base.css">
+<link rel="stylesheet" href="css/intro.css">
+<link rel="stylesheet" href="css/app.css">
+</head>
+<body class="booting">
+<canvas id="bg" aria-hidden="true"></canvas>
+<div id="rain2d" aria-hidden="true"></div>
+<div id="flash" aria-hidden="true"></div>
+
+<!-- Cinematic intro: black screen -> storm -> flooded city -> title -->
+<section id="intro" aria-label="FloodGrid intro">
+  <div class="black" id="black">
+    <button class="begin" id="begin" type="button"><span class="dot"></span>Tap to begin the storm</button>
+    <small>Sound on for the full experience</small>
+  </div>
+  <div class="titleblock" id="titleblock" hidden>
+    <div class="kicker" id="kicker">Secure Disaster Relief Coordination</div>
+    <h1 id="title" aria-label="FloodGrid"></h1>
+    <p class="tag" id="tag">Citizens ask&nbsp;·&nbsp;Volunteers respond&nbsp;·&nbsp;Admins see everything</p>
+    <button class="btn enter" id="enter" type="button" hidden>Enter FloodGrid →</button>
+  </div>
+  <div class="cap" id="cap" aria-live="polite"></div>
+  <button class="skip" id="skip" type="button" hidden>Skip intro</button>
+</section>
+
+<div id="app" hidden></div>
+<div id="modal-root" aria-live="polite"></div>
+<!-- water-wipe page transition -->
+<div id="wipe" aria-hidden="true"><div class="wvc"><svg class="wv b" viewBox="0 0 1200 90" preserveAspectRatio="none"><path d="M0 45 Q150 0 300 45 T600 45 T900 45 T1200 45 V90 H0Z"/></svg><svg class="wv" viewBox="0 0 1200 90" preserveAspectRatio="none"><path d="M0 45 Q150 0 300 45 T600 45 T900 45 T1200 45 V90 H0Z"/></svg></div><div class="fill"></div></div>
+<div class="toast" id="toast" role="status" aria-live="polite" hidden></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="js/sound.js"></script>
+<script src="js/scene.js"></script>
+<script src="js/api.js"></script>
+<script src="js/intro.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
