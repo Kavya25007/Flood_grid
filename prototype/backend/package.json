@@ -1,0 +1,14 @@
+{
+  "name": "floodgrid",
+  "version": "1.0.0",
+  "description": "FloodGrid - Secure Disaster Relief Coordination Platform (full-stack)",
+  "main": "index.js",
+  "engines": { "node": ">=22.5" },
+  "scripts": {
+    "start": "node --no-warnings index.js",
+    "dev": "node --no-warnings --watch index.js",
+    "seed": "node --no-warnings db/seed.js --reset",
+    "test": "node --no-warnings --test test/*.test.js"
+  },
+  "license": "MIT"
+}
