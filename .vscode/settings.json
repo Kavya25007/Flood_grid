@@ -1,0 +1,9 @@
+{
+    "appService.zipIgnorePattern": [
+        "node_modules{,/**}",
+        ".vscode{,/**}",
+        ".env"
+    ],
+    "appService.defaultWebAppToDeploy": "/subscriptions/86f91027-054d-4336-bf40-7f55a3b93c25/resourceGroups/floodgrid-rg/providers/Microsoft.Web/sites/floodgrid-ananya",
+    "appService.deploySubpath": "backend"
+}
