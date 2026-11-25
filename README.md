@@ -1,120 +1,116 @@
-# FloodGrid: Secure Disaster Relief Coordination Platform
+<div align="center">
 
-FloodGrid is a web platform that helps coordinate flood relief. Affected citizens raise help requests, volunteers accept and fulfil them, and every action is saved in a database with an audit trail.
+# 🌊 FloodGrid
+### Secure Disaster Relief Coordination Platform
 
-> Integrated Full-Stack Project (System Design, RDBMS, DP-900, Cloud Security)
+*One system. No missed requests. Full accountability.*
 
-## Problem
+![React](https://img.shields.io/badge/React-20232A?logo=react&logoColor=61DAFB)
+![Node.js](https://img.shields.io/badge/Node.js-339933?logo=nodedotjs&logoColor=white)
+![Express](https://img.shields.io/badge/Express-000000?logo=express&logoColor=white)
+![Azure SQL](https://img.shields.io/badge/Azure_SQL-0078D4?logo=microsoftazure&logoColor=white)
+![Cosmos DB](https://img.shields.io/badge/Cosmos_DB-0078D4?logo=microsoftazure&logoColor=white)
+![Power BI](https://img.shields.io/badge/Power_BI-F2C811?logo=powerbi&logoColor=black)
 
-During floods, relief coordination happens over scattered WhatsApp messages and phone calls. This causes missed or duplicate requests, wrongly allocated stock and no accountability. FloodGrid brings everything into one secure system.
+[Overview](#overview) · [Features](#features) · [Architecture](#architecture) · [Quick Start](#quick-start) · [API](#api) · [Security](#security) · [Roadmap](#roadmap)
 
-## Users and Roles
+</div>
 
-| Role | What they can do |
+---
+
+## Overview
+FloodGrid is a web platform that coordinates flood relief. Affected citizens raise help requests, volunteers accept and fulfil them, NGOs manage camps and stock, and every action is stored in a database with an audit trail.
+
+Built as an integrated full-stack project covering **System Design, RDBMS, DP-900 and Cloud Security**.
+
+### The Problem
+During floods, relief runs on scattered WhatsApp messages and phone calls. This causes:
+- Missed or duplicate requests
+- Wrongly allocated stock
+- No accountability
+
+FloodGrid brings everything into one secure system.
+
+## Roles
+| Role | What they do |
 |---|---|
-| Citizen | Raise help requests and track their status |
-| Volunteer | View open requests and accept them |
-<<<<<<< HEAD
-| NGO | Manage relief stock and deliveries (planned) |
-| Admin | Manage camps and inventory, view the audit log |
-=======
-| NGO | Create relief camps, add stock and allocate it to requests |
-| Admin | View analytics, total stock and the audit log |
->>>>>>> 7f153b8 (update README with final status)
+| **Citizen** | Raise help requests and track their status |
+| **Volunteer** | View open requests and accept them |
+| **NGO** | Create relief camps, add stock, allocate it to requests |
+| **Admin** | View analytics, total stock and the audit log |
 
-## Current Status
+## Features
+- **Role-based access:** each user sees only what their role allows
+- **Help request lifecycle:** create, view open requests, accept, track
+- **Camp and stock management:** transactional allocation using the stored procedure `sp_AllocateStock`, so stock never goes out of sync
+- **Delivery proof:** photo upload to Azure Blob Storage
+- **Activity events:** stored in Cosmos DB (NoSQL, partition key `/userId`)
+- **Analytics:** Power BI dashboard on Azure SQL views
+- **Audit log:** every user action is recorded
+- **Health check:** one endpoint confirms backend and database are connected
 
-Working end to end:
-- Login with role-based access
-- Citizen creates a help request
-- Volunteer views open requests and accepts one
-- Data is stored in Azure SQL
-- Backend API is connected to Azure SQL
-- Frontend and backend are integrated
-- Frontend production build is generated and served by the backend
-- Health check confirms that the backend and database are connected
-<<<<<<< HEAD
+## How It Works
+```mermaid
+flowchart LR
+    A[Citizen raises request] --> B[(Azure SQL)]
+    B --> C[Volunteer sees open requests]
+    C --> D[Volunteer accepts]
+    D --> E[NGO allocates stock]
+    E --> F[Delivery proof to Blob Storage]
+    D --> G[(Cosmos DB events)]
+    B --> H[Power BI analytics]
+```
 
-Currently working on:
-- End-to-end testing
-- Azure App Service deployment and configuration
-- Remaining Azure services and final integration
-
-Planned for the final submission:
-- Relief camp and stock management with transactions
-- Delivery proof upload using Azure Blob Storage
-- Activity/event data using Cosmos DB
-- Analytics dashboard using Power BI
-- Key Vault for secure secret management
-- Final cloud security configuration
-=======
-
-Currently working on:
-- End-to-end testing
-- Azure App Service deployment and configuration
-- Remaining Azure services and final integration
-
-Added in code for the final submission (Blob, Cosmos and Key Vault switch on through environment variables, see docs/azure-setup.md):
-- Relief camp and stock management with transactions (NGO role, stored procedure sp_AllocateStock)
-- Delivery proof photo upload using Azure Blob Storage
-- Activity events using Cosmos DB (NoSQL, partition key /userId)
-- Analytics dashboard using Power BI on Azure SQL views
-- Key Vault with managed identity for secrets
-- Final cloud security configuration (firewall, HTTPS only, least privilege)
->>>>>>> 7f153b8 (update README with final status)
+## Architecture
+```mermaid
+flowchart TB
+    U[Browser: React app] -->|HTTPS| S[Express API on Azure App Service]
+    S --> SQL[(Azure SQL: requests, camps, stock, audit)]
+    S --> BLOB[Azure Blob Storage: delivery proofs]
+    S --> COSMOS[(Cosmos DB: activity events)]
+    S --> KV[Key Vault: secrets via managed identity]
+    SQL --> PBI[Power BI dashboard]
+```
 
 ## Tech Stack
-
-- Frontend: React
-- Backend: Node.js, Express
-- Database: Azure SQL (relational)
-- Authentication: JWT, bcrypt
-- Security: Helmet, CORS, rate limiting, parameterized SQL queries
-<<<<<<< HEAD
-- Planned: Azure Blob Storage, Cosmos DB, Key Vault, App Service, Power BI
-=======
-- Azure: SQL Database, App Service, Blob Storage, Cosmos DB, Key Vault, Power BI
->>>>>>> 7f153b8 (update README with final status)
+| Layer | Tech |
+|---|---|
+| Frontend | React |
+| Backend | Node.js, Express |
+| Database | Azure SQL (relational) |
+| Auth | JWT, bcrypt |
+| Security | Helmet, CORS, rate limiting, parameterized queries |
+| Azure | SQL Database, App Service, Blob Storage, Cosmos DB, Key Vault, Power BI |
 
 ## Project Structure
-
-```text
-frontend/       React app
-backend/        Express API and server
-backend/public/ Production frontend build
-<<<<<<< HEAD
-database/       schema.sql and sample data
-=======
-database/       schema.sql, schema_camps.sql and sample data
-docs/           architecture, API list, security and Azure guides
->>>>>>> 7f153b8 (update README with final status)
+```
+frontend/        React app
+backend/         Express API and server
+backend/public/  Production frontend build
+database/        schema.sql, schema_camps.sql, sample data
+docs/            architecture, API list, security and Azure guides
 README.md
 ```
 
-## Setup Steps
+## Quick Start
 
-### 1. Clone the repository
-
+### 1. Clone
 ```bash
 git clone <REPO_LINK>
 cd <REPO_FOLDER>
 ```
 
 ### 2. Database
-
 1. Create an Azure SQL database.
 2. In the server firewall settings, allow your IP address.
-3. Run `database/schema.sql` to create the tables, then run the sample data script.
+3. Run `database/schema.sql` and `database/schema_camps.sql`, then the sample data script.
 
 ### 3. Backend
-
 ```bash
 cd backend
 npm install
 ```
-
-Create a `.env` file in the `backend` folder (never commit this file):
-
+Create `backend/.env` (never commit this file):
 ```env
 DB_SERVER=your-server.database.windows.net
 DB_NAME=your-database-name
@@ -123,73 +119,69 @@ DB_PASSWORD=your-password
 JWT_SECRET=any-long-random-string
 PORT=5000
 ```
-
-Start the server:
-
 ```bash
 npm start
 ```
-
 The backend runs on port `5000` by default.
 
+> Blob Storage, Cosmos DB and Key Vault switch on through environment variables. See `docs/azure-setup.md`.
+
 ### 4. Frontend
-
-For development:
-
 ```bash
 cd frontend
 npm install
-npm run dev
+npm run dev        # development
+npm run build      # production build
 ```
-
-For a production build:
-
-```bash
-npm run build
-```
-
-The generated frontend files are copied to `backend/public` and can be served by the Express backend.
+The build is copied to `backend/public` and served by the Express backend.
 
 ## Test Logins (dummy data only)
-
 | Role | Email | Password |
 |---|---|---|
 | Citizen | citizen@test.com | Test@1234 |
 | Volunteer | volunteer@test.com | Test@1234 |
 | Admin | admin@test.com | Test@1234 |
 
-(Replace with the exact accounts from your sample data.)
-
-## API Endpoints
-
+## API
 | Method | Endpoint | Description |
 |---|---|---|
-| POST | /api/auth/login | Login and receive a token |
-| POST | /api/requests | Citizen creates a help request |
-| GET | /api/requests | List open requests |
-| PUT | /api/requests/:id/accept | Volunteer accepts a request |
-| GET | /api/health | Check backend and database connection |
+| `POST` | `/api/auth/login` | Login and receive a token |
+| `POST` | `/api/requests` | Citizen creates a help request |
+| `GET` | `/api/requests` | List open requests |
+| `PUT` | `/api/requests/:id/accept` | Volunteer accepts a request |
+| `GET` | `/api/health` | Check backend and database connection |
 
-## Security Measures
+Full endpoint list (camps, stock, uploads) is in `docs/`.
 
-- Passwords hashed with bcrypt
-- JWT-based authentication
-- Role-based access control on routes
-- Parameterized SQL queries to reduce SQL injection risk
-- Input validation for user-provided data
-- Helmet security middleware
-- CORS configuration
-- Rate limiting on login attempts
-- Secrets kept in `.env`, which is listed in `.gitignore`
-- Azure SQL firewall rule restricting database access
-- Audit log of user actions
+## Security
+| Area | Measure |
+|---|---|
+| Authentication | bcrypt hashing, JWT tokens |
+| Authorization | Role-based access control on routes |
+| Data | Parameterized SQL queries, input validation |
+| Web | Helmet headers, CORS configuration |
+| Abuse | Rate limiting on login attempts |
+| Secrets | `.env` is gitignored, Key Vault with managed identity in the cloud |
+| Network | Azure SQL firewall, HTTPS only, least privilege |
+| Accountability | Audit log of user actions |
+
+## Roadmap
+- [x] Role-based login
+- [x] Help request create and accept flow
+- [x] Azure SQL integration
+- [x] Frontend build served by backend
+- [x] Camp and stock management
+- [x] Blob, Cosmos DB, Key Vault integration in code
+- [ ] End-to-end testing
+- [ ] Azure App Service deployment and configuration
+- [ ] Final integration and cloud security configuration
 
 ## Team
-
-- Member 1: Ananya Srivastava, 25LBCS3220
-- Member 2: Kavya Kushwaha, 25LBCS3217
+| Name | Roll No. |
+|---|---|
+| Ananya Srivastava | 25LBCS3220 |
+| Kavya Kushwaha | 25LBCS3217 |
 
 ## Credits
-
-- React, Express, mssql, bcrypt, jsonwebtoken
-- AI tools were used as an aid for planning and drafting, and all code is understood and explainable by the team.
+React, Express, mssql, bcrypt, jsonwebtoken.
+AI tools were used as an aid for planning and drafting, and all code is understood and explainable by the team.
