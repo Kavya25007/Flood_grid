@@ -1,4 +1,5 @@
 require('dotenv').config();
+const path = require('path');
 const express = require('express');
 const cors = require('cors');
 const helmet = require('helmet');
@@ -14,7 +15,12 @@ app.get('/api/health', async (req, res) => {
   try {
     const pool = await getPool();
     await pool.request().query('SELECT 1 AS ok');
-    res.json({ status: 'ok', db: 'connected' });
+    res.json({
+      status: 'ok',
+      db: 'connected',
+      blob: !!process.env.AZURE_STORAGE_CONNECTION_STRING,
+      cosmos: !!(process.env.COSMOS_ENDPOINT && process.env.COSMOS_KEY),
+    });
   } catch (err) {
     console.error(err);
     res.status(500).json({ status: 'error', db: 'not connected' });
@@ -27,12 +33,11 @@ app.use('/api/auth/login', rateLimit({ windowMs: 15 * 60 * 1000, max: 20, messag
 app.use('/api/auth', require('./routes/auth.routes'));
 app.use('/api/requests', require('./routes/citizen.routes'));
 app.use('/api/requests', require('./routes/volunteer.routes'));
+app.use('/api/requests', require('./routes/proof.routes'));
+app.use('/api/ngo', require('./routes/ngo.routes'));
 app.use('/api/admin', require('./routes/admin.routes'));
 
-const path = require('path');
-
 app.use(express.static(path.join(__dirname, 'public')));
-
 app.get(/^\/(?!api).*/, (req, res) =>
   res.sendFile(path.join(__dirname, 'public', 'index.html'))
 );
