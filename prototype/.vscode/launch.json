@@ -1,0 +1,1 @@
+{ "version": "0.2.0", "configurations": [ { "name": "FloodGrid backend", "type": "node", "request": "launch", "cwd": "${workspaceFolder}/backend", "program": "${workspaceFolder}/backend/index.js", "runtimeArgs": ["--no-warnings"] } ] }
