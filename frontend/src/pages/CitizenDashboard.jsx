@@ -8,8 +8,10 @@ export default function CitizenDashboard() {
   const [requests, setRequests] = useState([]);
 
   const load = async () => {
-    const { data } = await api.get('/requests/mine');
-    setRequests(data);
+    try {
+      const { data } = await api.get('/requests/mine');
+      setRequests(data);
+    } catch { /* keep old list */ }
   };
 
   useEffect(() => { load(); }, []);
@@ -17,11 +19,15 @@ export default function CitizenDashboard() {
   return (
     <div>
       <Navbar />
-      <div style={{ maxWidth: 700, margin: '20px auto', padding: '0 12px' }}>
-        <RequestForm onCreated={load} />
-        <h2>My Requests</h2>
-        {requests.length === 0 && <p>No requests yet.</p>}
-        {requests.map((r) => <RequestCard key={r.id} request={r} />)}
+      <div className="wrap">
+        <div className="col"><RequestForm onCreated={load} /></div>
+        <div className="col" style={{ flex: '1.4 1 420px' }}>
+          <h2 style={{ margin: 0 }}>My requests</h2>
+          {requests.length === 0 && <p className="muted">No requests yet.</p>}
+          {requests.map((r) => (
+            <RequestCard key={r.id} request={{ ...r, volunteer: r.volunteer || (r.status === 'OPEN' ? 'Waiting for a volunteer' : '') }} />
+          ))}
+        </div>
       </div>
     </div>
   );
