@@ -1,5 +1,7 @@
 const { sql, getPool } = require('../db');
+const events = require('./events');
 
+// Writes to the AuditLog table (Azure SQL) and mirrors the event to Cosmos DB when configured
 async function logAction(userId, action, details) {
   try {
     const pool = await getPool();
@@ -11,6 +13,7 @@ async function logAction(userId, action, details) {
   } catch (err) {
     console.error('Audit log failed:', err.message);
   }
+  events.logEvent(userId, action, { details: details || null });
 }
 
 module.exports = { logAction };
