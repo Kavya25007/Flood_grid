@@ -14,8 +14,13 @@ During floods, relief coordination happens over scattered WhatsApp messages and 
 |---|---|
 | Citizen | Raise help requests and track their status |
 | Volunteer | View open requests and accept them |
+<<<<<<< HEAD
 | NGO | Manage relief stock and deliveries (planned) |
 | Admin | Manage camps and inventory, view the audit log |
+=======
+| NGO | Create relief camps, add stock and allocate it to requests |
+| Admin | View analytics, total stock and the audit log |
+>>>>>>> 7f153b8 (update README with final status)
 
 ## Current Status
 
@@ -28,6 +33,7 @@ Working end to end:
 - Frontend and backend are integrated
 - Frontend production build is generated and served by the backend
 - Health check confirms that the backend and database are connected
+<<<<<<< HEAD
 
 Currently working on:
 - End-to-end testing
@@ -41,6 +47,21 @@ Planned for the final submission:
 - Analytics dashboard using Power BI
 - Key Vault for secure secret management
 - Final cloud security configuration
+=======
+
+Currently working on:
+- End-to-end testing
+- Azure App Service deployment and configuration
+- Remaining Azure services and final integration
+
+Added in code for the final submission (Blob, Cosmos and Key Vault switch on through environment variables, see docs/azure-setup.md):
+- Relief camp and stock management with transactions (NGO role, stored procedure sp_AllocateStock)
+- Delivery proof photo upload using Azure Blob Storage
+- Activity events using Cosmos DB (NoSQL, partition key /userId)
+- Analytics dashboard using Power BI on Azure SQL views
+- Key Vault with managed identity for secrets
+- Final cloud security configuration (firewall, HTTPS only, least privilege)
+>>>>>>> 7f153b8 (update README with final status)
 
 ## Tech Stack
 
@@ -49,7 +70,11 @@ Planned for the final submission:
 - Database: Azure SQL (relational)
 - Authentication: JWT, bcrypt
 - Security: Helmet, CORS, rate limiting, parameterized SQL queries
+<<<<<<< HEAD
 - Planned: Azure Blob Storage, Cosmos DB, Key Vault, App Service, Power BI
+=======
+- Azure: SQL Database, App Service, Blob Storage, Cosmos DB, Key Vault, Power BI
+>>>>>>> 7f153b8 (update README with final status)
 
 ## Project Structure
 
@@ -57,7 +82,12 @@ Planned for the final submission:
 frontend/       React app
 backend/        Express API and server
 backend/public/ Production frontend build
+<<<<<<< HEAD
 database/       schema.sql and sample data
+=======
+database/       schema.sql, schema_camps.sql and sample data
+docs/           architecture, API list, security and Azure guides
+>>>>>>> 7f153b8 (update README with final status)
 README.md
 ```
 
