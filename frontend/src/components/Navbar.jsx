@@ -7,12 +7,12 @@ export default function Navbar() {
     navigate('/');
   };
   return (
-    <div style={{ display: 'flex', justifyContent: 'space-between', padding: 12, background: '#0b5ed7', color: 'white' }}>
-      <b>FloodGrid</b>
-      <span>
+    <div className="nav">
+      <div className="brand"><span className="dot" />FloodGrid</div>
+      <div>
         {localStorage.getItem('name')} ({localStorage.getItem('role')}){' '}
-        <button onClick={logout}>Logout</button>
-      </span>
+        <button className="btn l" onClick={logout}>Logout</button>
+      </div>
     </div>
   );
 }
