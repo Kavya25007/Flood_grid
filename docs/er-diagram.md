@@ -26,6 +26,23 @@ erDiagram
     int VolunteerId FK
     datetime AcceptedAt
     datetime DeliveredAt }
+  DeliveryProofs { int ProofId PK
+    int RequestId FK_UK
+    varchar BlobName
+    int UploadedBy FK }
+  Camps { int CampId PK
+    varchar Name
+    int Capacity
+    int CreatedBy FK }
+  StockItems { int StockId PK
+    int CampId FK
+    varchar ItemName
+    int Quantity }
+  StockMovements { int MovementId PK
+    int StockId FK
+    int RequestId FK
+    int QtyChange
+    varchar Reason }
   AuditLog { int LogId PK
     int UserId FK
     varchar Action
@@ -37,3 +54,6 @@ erDiagram
 **Constraints:** foreign keys on all relations, CHECK on `Type`, `Urgency`, `Status`, UNIQUE on `Users.Email` and `Assignments.RequestId`.
 **Indexes:** `IX_HelpRequests_Status`, `IX_HelpRequests_Citizen`.
 **View:** `vw_OpenRequests`. **Stored procedure with transaction:** `sp_AcceptRequest`. **Trigger:** `trg_RequestStatusAudit`.
+
+**Camp and stock module:** `Camps` 1-to-many `StockItems` (UNIQUE per camp and item, CHECK Quantity >= 0). Every change is written to `StockMovements` (ADDED or ALLOCATED). `DeliveryProofs` keeps only the blob name for each delivered request, the photo itself is in Blob Storage.
+**More views:** `vw_StockSummary`, `vw_PowerBI_Requests`, `vw_PowerBI_Stock`. **More stored procedure with transaction:** `sp_AllocateStock` (never lets stock go below zero).
