@@ -25,6 +25,21 @@ router.get('/stats', async (req, res) => {
   }
 });
 
+// Total stock per item across all camps
+router.get('/stock', async (req, res) => {
+  try {
+    const pool = await getPool();
+    const r = await pool.request().query(`
+      SELECT ItemName AS item, Unit AS unit, SUM(Quantity) AS quantity, COUNT(DISTINCT CampId) AS camps
+      FROM vw_StockSummary WHERE StockId IS NOT NULL
+      GROUP BY ItemName, Unit ORDER BY ItemName`);
+    res.json(r.recordset);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Server error' });
+  }
+});
+
 // Latest audit log entries
 router.get('/audit', async (req, res) => {
   try {
