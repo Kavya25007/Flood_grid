@@ -1,0 +1,55 @@
+#bg{position:fixed;inset:0;width:100%;height:100%;z-index:0;transition:opacity 1s}
+body.in #bg{opacity:.55}
+#flash{position:fixed;inset:0;z-index:60;background:#cfe0ff;opacity:0;pointer-events:none;mix-blend-mode:screen}
+#rain2d{position:fixed;inset:0;z-index:1;pointer-events:none;overflow:hidden;opacity:.5}
+#rain2d i{position:absolute;top:-10vh;width:1px;height:70px;background:linear-gradient(transparent,rgba(170,200,255,.5));animation:fall linear infinite}
+@keyframes fall{to{transform:translateY(125vh)}}
+#intro{position:fixed;inset:0;z-index:80;display:grid;place-items:center;text-align:center;color:var(--ink);padding:24px;transition:opacity 1s,visibility 1s}
+#intro.hide{opacity:0;visibility:hidden;pointer-events:none}
+.black{position:fixed;inset:0;background:#000;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;transition:opacity 1.6s}
+.black.gone{opacity:0;pointer-events:none}
+.black small{color:#5d6b86}
+.begin{background:none;border:1px solid rgba(160,190,255,.35);color:#cfe0ff;border-radius:999px;min-height:52px;padding:0 28px;font-family:var(--hf);font-size:18px;letter-spacing:.06em;cursor:pointer;display:flex;align-items:center;gap:12px;animation:pulse 2.4s ease-in-out infinite}
+.begin .dot{width:10px;height:10px;border-radius:50%;background:var(--blue2);box-shadow:0 0 14px var(--blue2)}
+.begin:hover{background:rgba(79,140,255,.12)}
+@keyframes pulse{50%{box-shadow:0 0 34px rgba(79,140,255,.35)}}
+.titleblock{position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;gap:20px;perspective:900px}
+.kicker{font:600 13px var(--bf);letter-spacing:.42em;text-transform:uppercase;color:#9FB1D0;opacity:0;transition:opacity 1.2s,letter-spacing 2s}
+.kicker.on{opacity:1;letter-spacing:.3em}
+#title{font-family:var(--hf);font-weight:700;font-size:clamp(46px,13.5vw,150px);line-height:1;letter-spacing:.04em;display:flex;justify-content:center;flex-wrap:wrap}
+#title span{display:inline-block;opacity:0;transform:translateY(60px) rotateX(-90deg) scale(.6);transform-origin:50% 100%;color:#eaf2ff;
+  text-shadow:0 0 18px rgba(79,140,255,.9),0 0 60px rgba(31,111,235,.75),0 6px 0 #14346e,0 12px 30px rgba(0,0,0,.7);filter:blur(10px)}
+#title span.on{animation:letter 1s cubic-bezier(.2,1.2,.3,1) forwards}
+#title span.g{background:linear-gradient(180deg,#fff,#7fb0ff 60%,#3f7bf0);-webkit-background-clip:text;background-clip:text;color:transparent;text-shadow:none;filter:drop-shadow(0 0 22px rgba(79,140,255,.8))}
+#title.zap span{animation:zap .5s}
+@keyframes letter{60%{filter:blur(0)}to{opacity:1;transform:none;filter:blur(0)}}
+@keyframes zap{30%{filter:brightness(2.4) drop-shadow(0 0 40px #fff)}}
+.tag{margin:0;font-size:clamp(15px,2.2vw,21px);color:#b9c7e6;opacity:0;transform:translateY(14px);transition:all 1s}
+.tag.on{opacity:1;transform:none}
+.enter{font-size:18px;min-height:54px;padding:0 34px;animation:rise .8s both}
+@keyframes rise{from{opacity:0;transform:translateY(18px)}}
+.skip{position:fixed;right:18px;bottom:18px;z-index:5;background:rgba(10,18,36,.6);border:1px solid var(--line);color:#9FB1D0;border-radius:999px;min-height:40px;padding:0 16px;cursor:pointer}
+
+/* ---- v2: captions, legibility, floating title, water-wipe transition ---- */
+.cap{position:fixed;left:0;right:0;bottom:15vh;z-index:3;text-align:center;padding:0 22px;pointer-events:none;font:500 clamp(20px,3.6vw,40px) var(--hf);letter-spacing:.02em;color:#e6eeff;
+  text-shadow:0 2px 24px #000,0 0 34px rgba(79,140,255,.55);opacity:0;transform:translateY(14px);filter:blur(8px);transition:opacity 1s,transform 1s cubic-bezier(.2,.8,.2,1),filter 1s}
+.cap.on{opacity:1;transform:none;filter:none}
+.cap.warn{color:#cfe0ff;text-shadow:0 2px 24px #000,0 0 40px rgba(31,111,235,.9)}
+.cap.red{color:#ffc2c9;text-shadow:0 2px 24px #000,0 0 40px rgba(255,60,80,.85)}
+.titleblock::before{content:"";position:absolute;inset:-30vh -30vw;z-index:-1;background:radial-gradient(closest-side,rgba(3,7,16,.65),transparent);pointer-events:none}
+#title span.on{animation:letter 1s cubic-bezier(.2,1.2,.3,1) forwards,bob 4.5s ease-in-out infinite}
+@keyframes bob{50%{transform:translateY(-7px)}}
+#title.zap span.on{animation:letter 1s cubic-bezier(.2,1.2,.3,1) forwards,bob 4.5s ease-in-out infinite,zap .6s}
+.enter{box-shadow:0 0 0 0 rgba(79,140,255,.6),0 6px 22px rgba(31,111,235,.4);animation:rise .9s both,ring 2.6s 1s infinite}
+@keyframes ring{to{box-shadow:0 0 0 22px rgba(79,140,255,0),0 6px 22px rgba(31,111,235,.4)}}
+
+#wipe{position:fixed;left:0;right:0;top:0;height:100%;z-index:150;pointer-events:none;transform:translateY(112%);visibility:hidden}
+#wipe .fill{position:absolute;inset:0;background:linear-gradient(180deg,#1d62d6,#0b2f78 40%,#061a45)}
+#wipe .fill::after{content:"";position:absolute;inset:0;background:radial-gradient(60% 40% at 50% 20%,rgba(160,200,255,.25),transparent)}
+#wipe .wvc{position:absolute;left:0;right:0;bottom:calc(100% - 1px);height:90px;overflow:hidden}
+#wipe .wv{position:absolute;left:0;bottom:0;width:200%;height:90px;fill:#1d62d6;animation:wave 1.8s linear infinite}
+#wipe .wv.b{height:70px;fill:rgba(190,220,255,.35);animation-duration:2.9s;animation-direction:reverse;bottom:6px}
+@keyframes wave{to{transform:translateX(-50%)}}
+#wipe.cover,#wipe.drain{visibility:visible;transition:transform var(--d,1s) cubic-bezier(.65,0,.25,1)}
+#wipe.cover{transform:translateY(0)}
+#wipe.drain{transform:translateY(112%)}
