@@ -1,7 +1,24 @@
 const router = require('express').Router();
+const multer = require('multer');
 const { sql, getPool } = require('../db');
 const { verifyToken, requireRole } = require('../middleware/auth');
 const { logAction } = require('../utils/audit');
+const blob = require('../utils/blob');
+
+// Proof photo: JPG or PNG up to 5 MB, kept in memory then sent to Azure Blob Storage
+const upload = multer({
+  storage: multer.memoryStorage(),
+  limits: { fileSize: 5 * 1024 * 1024, files: 1 },
+  fileFilter: (req, file, cb) => {
+    if (['image/jpeg', 'image/png'].includes(file.mimetype)) cb(null, true);
+    else cb(new Error('Only JPG or PNG images are allowed'));
+  },
+});
+const proofUpload = (req, res, next) =>
+  upload.single('proof')(req, res, (err) => {
+    if (err) return res.status(400).json({ message: err.message });
+    next();
+  });
 
 // Open requests, most urgent first (uses the vw_OpenRequests view)
 router.get('/', verifyToken, requireRole('volunteer', 'admin'), async (req, res) => {
@@ -58,23 +75,41 @@ router.put('/:id/accept', verifyToken, requireRole('volunteer'), async (req, res
   }
 });
 
-// Mark my accepted request as delivered
-router.put('/:id/deliver', verifyToken, requireRole('volunteer'), async (req, res) => {
+// Mark my accepted request as delivered, with an optional proof photo
+router.put('/:id/deliver', verifyToken, requireRole('volunteer'), proofUpload, async (req, res) => {
   const requestId = parseInt(req.params.id, 10);
   if (Number.isNaN(requestId)) return res.status(400).json({ message: 'Invalid id' });
   try {
     const pool = await getPool();
     const own = await pool.request()
       .input('id', sql.Int, requestId).input('v', sql.Int, req.user.id)
-      .query('SELECT 1 AS ok FROM Assignments WHERE RequestId = @id AND VolunteerId = @v');
+      .query(`SELECT r.Status FROM Assignments a JOIN HelpRequests r ON r.RequestId = a.RequestId
+              WHERE a.RequestId = @id AND a.VolunteerId = @v`);
     if (!own.recordset.length) return res.status(403).json({ message: 'Not your request' });
-    const upd = await pool.request().input('id', sql.Int, requestId)
+    if (own.recordset[0].Status !== 'ACCEPTED') {
+      return res.status(409).json({ message: 'Request is not in accepted state' });
+    }
+
+    let proofSaved = false;
+    if (req.file && blob.enabled()) {
+      try {
+        const name = await blob.uploadProof(req.file.buffer, req.file.mimetype, requestId);
+        await pool.request()
+          .input('r', sql.Int, requestId).input('b', sql.VarChar(200), name).input('u', sql.Int, req.user.id)
+          .query('INSERT INTO DeliveryProofs (RequestId, BlobName, UploadedBy) VALUES (@r, @b, @u)');
+        proofSaved = true;
+      } catch (err) {
+        console.error('Proof upload failed:', err.message);
+        return res.status(502).json({ message: 'Could not store the proof photo. Try again.' });
+      }
+    }
+
+    await pool.request().input('id', sql.Int, requestId)
       .query("UPDATE HelpRequests SET Status = 'DELIVERED' WHERE RequestId = @id AND Status = 'ACCEPTED'");
-    if (upd.rowsAffected[0] === 0) return res.status(409).json({ message: 'Request is not in accepted state' });
     await pool.request().input('id', sql.Int, requestId)
       .query('UPDATE Assignments SET DeliveredAt = SYSDATETIME() WHERE RequestId = @id');
-    await logAction(req.user.id, 'REQUEST_DELIVERED', `Request ${requestId}`);
-    res.json({ message: 'Marked delivered', status: 'DELIVERED' });
+    await logAction(req.user.id, 'REQUEST_DELIVERED', `Request ${requestId}${proofSaved ? ' with proof' : ''}`);
+    res.json({ message: 'Marked delivered', status: 'DELIVERED', proof: proofSaved });
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: 'Server error' });
