@@ -1,4 +1,0 @@
-1. Zip extract karo, saare folders/files Flood_grid me Replace all.
-2. Flood_grid folder kholo, commit_ananya.bat pe double click.
-   (Kavya ka push pehle ho chuka ho.)
-3. Black window me last me commits dikhenge. Pause pe koi key dabao.
