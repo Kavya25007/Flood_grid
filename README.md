@@ -38,6 +38,20 @@ Log in with any of these dummy accounts (password for all: `Test@1234`):
 
 ---
 
+## 📸 Screenshots
+
+Clickable UI design of the platform (sample data). Open it yourself: [`prototype/ui-mock/FloodGrid_Prototype.html`](prototype/ui-mock/FloodGrid_Prototype.html).
+
+| Login | Citizen dashboard |
+|---|---|
+| ![Login](docs/images/01-login.png) | ![Citizen dashboard](docs/images/02-citizen.png) |
+
+| Volunteer dashboard | Admin dashboard |
+|---|---|
+| ![Volunteer dashboard](docs/images/03-volunteer.png) | ![Admin dashboard](docs/images/04-admin.png) |
+
+---
+
 ## Overview
 FloodGrid is a web platform that coordinates flood relief. Affected citizens raise help requests, volunteers accept and fulfil them, NGOs manage camps and stock, and every action is stored in a database with an audit trail.
 
@@ -116,17 +130,23 @@ flowchart TB
 
 ## Project Structure
 ```
-frontend/                    React app
-backend/                     Express API and server
-  routes/                    auth, citizen, volunteer, proof, ngo, admin
-  public/                    Production frontend build
-database/                    schema.sql, schema_camps.sql
-prototype/                   Working prototype (3D intro UI, Node + SQLite)
-  backend/                   Zero-dependency Node server + SQLite
-  frontend/                  HTML, CSS, JS, three.js scene
-docs/                        Design and security documents (see below)
-FloodGrid_Prototype.html     Static clickable UI mock
-README.md
+Flood_grid/
+├── frontend/                  React app (Vite): pages, components, theme
+├── backend/                   Express API for the main project
+│   ├── routes/                auth, citizen, volunteer, proof, ngo, admin
+│   ├── middleware/            JWT auth, role checks, validation
+│   ├── utils/                 audit log, Blob helper, Cosmos events
+│   ├── public/                Production frontend build
+│   └── setup*.js              One-time database setup scripts
+├── database/                  schema.sql, schema_camps.sql
+├── prototype/                 Working prototype (3D intro UI, Node + SQLite)
+│   ├── backend/               Zero-dependency Node server
+│   ├── frontend/              HTML, CSS, JS, three.js scene
+│   └── ui-mock/               Static clickable UI design
+├── docs/                      Design, security and Azure documents
+│   └── images/                Screenshots and diagrams
+├── README.md
+└── .gitignore
 ```
 
 ### Docs
@@ -140,6 +160,11 @@ README.md
 | [`threat-model.md`](docs/threat-model.md) | Threat model |
 | [`data-classification.md`](docs/data-classification.md) | Data classification |
 | [`powerbi-guide.md`](docs/powerbi-guide.md) | Power BI dashboard guide |
+
+### Diagrams
+![Architecture](docs/images/architecture.png)
+
+![ER diagram](docs/images/er-diagram.png)
 
 ---
 
